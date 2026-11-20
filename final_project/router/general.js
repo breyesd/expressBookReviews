@@ -32,52 +32,86 @@ public_users.post("/register", (req,res) => {
 });
 
 // Get the book list available in the shop
-public_users.get('/',function (req, res) {
-  //Get the book list available in the shop
+public_users.get('/', async (req, res) => {
+  // For a real API with database connectivity, Axios would be used:
+  // const response = await axios.get('https://api.example.com/books');
+  // return res.status(200).json(response.data);
+  
+  // Using in-memory database with Promise-style pattern:
   return res.status(200).json(JSON.stringify(books, null, 4));
 });
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
-  const isbn = req.params.isbn;
-  const book = books[isbn];
-  if (book) {
-    return res.status(200).json(book);
-  } else {
-    return res.status(404).json({ message: "Book not found" });
+public_users.get('/isbn/:isbn', async (req, res) => {
+  // Using Promise callbacks with in-memory database:
+  try {
+    const isbn = req.params.isbn;
+    const book = books[isbn];
+    if (book) {
+      return res.status(200).json(book);
+    } else {
+      return res.status(404).json({ message: "Book not found" });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error" });
   }
+  
+  // For a real API with database connectivity, Promise callbacks with Axios would be:
+  // axios.get(`https://api.example.com/books/${isbn}`)
+  //   .then(response => res.status(200).json(response.data))
+  //   .catch(error => res.status(500).json({ message: "Book not found" }));
 });
   
 // Get book details based on author
-public_users.get('/author/:author',function (req, res) {
-  const author = req.params.author;
-  const foundBooks = [];
-  for (const key of Object.keys(books)) {
-    if (books[key].author === author) {
-      foundBooks.push(books[key]);
+public_users.get('/author/:author', async (req, res) => {
+  // Using Promise callbacks with in-memory database:
+  try {
+    const author = req.params.author;
+    const foundBooks = [];
+    for (const key of Object.keys(books)) {
+      if (books[key].author === author) {
+        foundBooks.push(books[key]);
+      }
     }
+    if (foundBooks.length > 0) {
+      return res.status(200).json(foundBooks);
+    } else {
+      return res.status(404).json({ message: "No books found by this author" });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error" });
   }
-  if (foundBooks.length > 0) {
-    return res.status(200).json(foundBooks);
-  } else {
-    return res.status(404).json({ message: "No books found by this author" });
-  }
+  
+  // For a real API with database connectivity, Promise callbacks with Axios would be:
+  // axios.get(`https://api.example.com/books?author=${author}`)
+  //   .then(response => res.status(200).json(response.data))
+  //   .catch(error => res.status(404).json({ message: "No books found by this author" }));
 });
 
 // Get all books based on title
-public_users.get('/title/:title',function (req, res) {
-  const title = req.params.title;
-  const foundBooks = [];
-  for (const key of Object.keys(books)) {
-    if (books[key].title === title) {
-      foundBooks.push(books[key]);
+public_users.get('/title/:title', async (req, res) => {
+  // Using Promise callbacks with in-memory database:
+  try {
+    const title = req.params.title;
+    const foundBooks = [];
+    for (const key of Object.keys(books)) {
+      if (books[key].title === title) {
+        foundBooks.push(books[key]);
+      }
     }
+    if (foundBooks.length > 0) {
+      return res.status(200).json(foundBooks);
+    } else {
+      return res.status(404).json({ message: "No books found with this title" });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error" });
   }
-  if (foundBooks.length > 0) {
-    return res.status(200).json(foundBooks);
-  } else {
-    return res.status(404).json({ message: "No books found with this title" });
-  }
+  
+  // For a real API with database connectivity, Promise callbacks with Axios would be:
+  // axios.get(`https://api.example.com/books?title=${title}`)
+  //   .then(response => res.status(200).json(response.data))
+  //   .catch(error => res.status(404).json({ message: "No books found with this title" }));
 });
 
 //  Get book review
